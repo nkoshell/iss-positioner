@@ -1,0 +1,18 @@
+aiohttp>=2.1.0
+
+
+# storage
+aioredis>=0.3.1
+
+# serializers
+ujson>=1.35
+pyaml>=16.12.2
+
+# calculations
+pyephem>=3.7.6.0
+
+# log
+tqdm>=4.14.0
+
+# parsers
+dateutils>= 0.6.6

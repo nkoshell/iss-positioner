@@ -1,0 +1,6 @@
+include LICENSE
+include README.rst
+include requirements.in
+global-exclude *.pyc
+graft iss_positioner
+graft examples

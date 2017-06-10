@@ -1,0 +1,12 @@
+redis:
+  host: localhost
+  encoding: utf-8
+
+tle-storage:
+  listen_url: ws://tle.nkoshelev.pro/subscribe
+  query_url: http://tle.nkoshelev.pro/query
+
+on-startup:
+  redis:
+    flush: true
+    fill: true

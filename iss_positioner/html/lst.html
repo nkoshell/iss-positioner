@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ISS positioner service</title>
+    <script src=" https://yastatic.net/jquery/3.1.1/jquery.min.js"></script>
+    <style>
+        div.input-group {
+            margin-bottom: 2vh;
+        }
+
+        input {
+            min-width: 25vw;
+        }
+
+        fieldset {
+            padding: 2vh 2vw;
+            margin-bottom: 4vh;
+        }
+
+        button {
+            float: right;
+        }
+
+        pre {
+            background-color: rgba(209, 209, 209, 0.42);
+        }
+    </style>
+</head>
+<body>
+
+<h1>ISS positioner service</h1>
+<form method="post" accept-charset="utf-8" enctype="multipart/form-data">
+    <fieldset>
+        <legend>LST file upload
+            <small>(all fields are required)</small>
+        </legend>
+
+        <div class="input-group">
+            <label for="start_dt">Start date and time</label>
+            <input id="start_dt" type="datetime-local" name="start_dt" placeholder="Select start date and time"
+                   required/>
+        </div>
+
+        <div class="input-group">
+            <label for="end_dt">End date and time</label>
+            <input id="end_dt" type="datetime-local" name="end_dt" placeholder="Select end date and time" required/>
+        </div>
+
+        <div class="input-group">
+            <label for="min_duration">Minimum session duration (in seconds)</label>
+            <input id="min_duration" type="number" min="1" step="1" name="min_duration" value="60"/>
+        </div>
+
+        <div class="input-group">
+            <label for="dist">Maximum distance to the object</label>
+            <input id="dist" type="number" min="1" step="0.1" name="dist" value="250"/>
+        </div>
+
+        <div class="input-group">
+            <label for="unit">Unit for distance to the object</label>
+            <select id="unit">
+                <option value="km">Kilometers</option>
+                <option value="m">Meters</option>
+            </select>
+        </div>
+
+        <div class="input-group">
+            <label for="lst">LST file</label>
+            <input id="lst" type="file" name="lst" required/>
+        </div>
+
+        <div class="input-group">
+            <button type="submit">Submit</button>
+        </div>
+    </fieldset>
+    <div class="answer" style="display: none;">
+        <button id="save">Download response</button>
+        <h3>Server response</h3>
+        <pre></pre>
+    </div>
+</form>
+<script>
+    (function ($) {
+        var $form = $('form');
+        var $answer = $('.answer');
+        var $pre = $('.answer > pre');
+
+        $form.submit(function (event) {
+            event.preventDefault();
+
+
+            var formData = new FormData();
+
+            $form.serializeArray().forEach(function (inpt) {
+                formData.append(inpt.name, inpt.value);
+            });
+
+            formData.append('lst', $("#lst")[0].files.item(0));
+
+            $.ajax({
+                url: '/lst',
+                method: 'POST',
+                data: formData,
+                contentType: false,
+                processData: false,
+                dataType: 'json',
+                success: function (data) {
+                    $pre.html(JSON.stringify(data.data, null, 2));
+                    $answer.fadeIn();
+                },
+                error: function (answer) {
+                    var data = answer.responseJSON;
+                    if (data.error_msg === 'Not Found') {
+                        alert('Not ISS coordinates for selected date range')
+                    }
+                }
+            })
+        });
+
+        $('#save').click(function (event) {
+            event.preventDefault();
+            download($pre.text(), 'coords.json', 'application/octet-stream');
+        });
+
+        function download(text, name, type) {
+            var a = document.createElement("a");
+            var file = new Blob([text], {type: type});
+            a.href = URL.createObjectURL(file);
+            a.download = name;
+            a.click();
+            if (a.parentNode) {
+                a.parentNode.removeChild(a);
+            }
+        }
+    })(window.jQuery);
+</script>
+</body>
+</html>
