@@ -1,5 +1,5 @@
 redis:
-  host: localhost
+  host: redis
   encoding: utf-8
 
 tle-storage:
