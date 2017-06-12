@@ -2,6 +2,7 @@
 import asyncio
 from datetime import datetime, timedelta
 from functools import partial
+from itertools import chain
 from json import JSONDecodeError
 
 from aiohttp import web
@@ -30,19 +31,36 @@ class CoordsApi(web.View):
     async def coords(self, data):
         start_dt = end_dt = dt_parser.parse(data.pop('dt'))
         if start_dt < datetime(*datetime.today().timetuple()[:3]):
-            raise web.HTTPNotFound
+            return await self.compute_coords(start_dt=start_dt, end_dt=end_dt)
         return await self.get_coords(start_dt=start_dt, end_dt=end_dt, step=1)
 
     async def coords_range(self, data):
         _validate_requires({'start_dt', 'end_dt'}, data, is_body=False)
         dts = dt_parser.parse(data.pop('start_dt')), dt_parser.parse(data.pop('end_dt'))
+        step = data.get('step', 1)
         start_dt, end_dt = min(dts), max(dts)
-        if start_dt < datetime(*datetime.today().timetuple()[:3]):
-            raise web.HTTPNotFound
-        return await self.get_coords(start_dt=start_dt, end_dt=end_dt, step=data.get('step', 1))
+        today = datetime(*datetime.today().timetuple()[:3])
+
+        if start_dt < today:
+            if end_dt < today:
+                return await self.compute_coords(start_dt, end_dt, step=step)
+
+            coords = await asyncio.gather(self.compute_coords(start_dt, today, step),
+                                          self.get_coords(start_dt=today, end_dt=end_dt, step=step),
+                                          loop=self.request.app.loop)
+            return chain.from_iterable(coords)
+
+        return await self.get_coords(start_dt=start_dt, end_dt=end_dt, step=step)
 
     async def get_coords(self, **params):
         return await get_coords(self.request.app['redis'], loop=self.request.app.loop, **params)
+
+    async def compute_coords(self, start_dt, end_dt, step=1):
+        satellite = self.request.app['satellite']
+        filters = {"dt": {"$gte": (start_dt - timedelta(days=1)).isoformat(), "$lte": end_dt.isoformat()}}
+        satellite.tle_db = (tle['extra_info'] for tle in await self.request.app['get_tle'](filters=filters))
+        coords = await satellite.compute(start_dt, end_dt, step)
+        return [dict(dt=dt, coords=dict(longitude=lon, latitude=lat)) for lon, lat, dt in coords]
 
 
 class RadiusApi(web.View):

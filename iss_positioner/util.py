@@ -85,10 +85,13 @@ def find_le(a, x):
     raise ValueError
 
 
-async def get_tle(*, url=None, loop=None):
-    d = datetime.today().date() - timedelta(days=1)
+async def get_tle(*, url=None, filters=None, loop=None):
+    if not isinstance(filters, dict):
+        d = datetime.today().date() - timedelta(days=1)
+        filters = {"dt": {"$gte": d.isoformat()}, "norad_cat_id": 25544}
+
     query = {
-        "filters": ujson.dumps({"dt": {"$gte": d.isoformat()}, "norad_cat_id": 25544}),
+        "filters": ujson.dumps(filters),
         "order": "dt",
         "only": "id,source,extra_info"
     }

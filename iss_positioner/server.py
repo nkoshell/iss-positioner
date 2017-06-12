@@ -13,17 +13,17 @@ from .middlewares import json_response_middleware
 from .tasks import listen_tle_queue, listen_tle_storage
 from .util import get_tle
 
-
 __all__ = (
     'ISSPositionerService',
 )
+
 
 async def start_background_tasks(app):
     tle_storage_conf = app['config']['tle-storage'].copy()
     redis_params = app['config']['redis'].copy()
     redis_addres = redis_params.pop('host', 'localhost'), redis_params.pop('port', 6379)
 
-    tle_getter = partial(get_tle, url=tle_storage_conf['query_url'], loop=app.loop)
+    app['get_tle'] = partial(get_tle, url=tle_storage_conf['query_url'], loop=app.loop)
 
     app['satellite'] = AsyncSatellite(loop=app.loop)
     app['redis'] = await create_reconnecting_redis(redis_addres, **redis_params, loop=app.loop)
@@ -34,7 +34,7 @@ async def start_background_tasks(app):
     tle_storage_listener = listen_tle_storage(tle_storage_conf['listen_url'], app['queue'], loop=app.loop)
     tle_queue_listener = listen_tle_queue(app['queue'], app['channels']['coords'],
                                           app['redis'], app['satellite'],
-                                          tle_getter=tle_getter)
+                                          tle_getter=app['get_tle'])
 
     app['tle_storage_listener'] = app.loop.create_task(tle_storage_listener)
     app['tle_queue_listener'] = app.loop.create_task(tle_queue_listener)
