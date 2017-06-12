@@ -1,4 +1,5 @@
 # -*- coding: utf-8  -*-
+import asyncio
 from aiohttp import ClientSession
 
 from .log import logger
@@ -44,10 +45,17 @@ async def listen_tle_queue(queue, channel, redis, satellite, *, tle_getter=None)
 
 
 async def listen_tle_storage(ws_url, queue, *, loop=None):
-    async with ClientSession(loop=loop) as session:
-        async with session.ws_connect(ws_url) as ws:
-            while True:
-                msg = await ws.receive_json()
-                if msg.pop('channel', None) == 'tle:nasa:update':
-                    logger.info('TLE from NASA have been updated: %s', msg)
-                    await queue.put(msg)
+    try:
+        async with ClientSession(loop=loop) as session:
+            async with session.ws_connect(ws_url) as ws:
+                while True:
+                    msg = await ws.receive_json()
+                    if msg.pop('channel', None) == 'tle:nasa:update':
+                        logger.info('TLE from NASA have been updated: %s', msg)
+                        await queue.put(msg)
+    except Exception as exc:
+        logger.exception(exc)
+
+        await asyncio.sleep(5)
+        logger.info('Try reconnect to "%s"', ws_url)
+        listen_tle_storage(ws_url, queue, loop=loop)
