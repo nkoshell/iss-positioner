@@ -58,4 +58,4 @@ async def listen_tle_storage(ws_url, queue, *, loop=None):
 
         await asyncio.sleep(5)
         logger.info('Try reconnect to "%s"', ws_url)
-        listen_tle_storage(ws_url, queue, loop=loop)
+        await listen_tle_storage(ws_url, queue, loop=loop)

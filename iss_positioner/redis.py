@@ -73,6 +73,7 @@ async def store_coords(satellite, redis, *, calculation_step=timedelta(hours=1),
     for dt in tqdm(tuple(datetime_range(start_dt, end_dt, calculation_step)), mininterval=1):
         coords = await satellite.compute(dt, dt + calculation_step)
         added_count += await redis.geoadd(dt.isoformat(' '), *chain.from_iterable(coords))
+        del coords
 
     deleted_start, deleted_end, deleted_count = None, None, 0
     if clear_old:
