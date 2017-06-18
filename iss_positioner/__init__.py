@@ -5,7 +5,7 @@ from .redis import *
 from .server import ISSPositionerService
 from .util import *
 
-__version__ = '1.0.2'
+__version__ = '1.0.3'
 
 __all__ = (
     calculations.__all__ +
