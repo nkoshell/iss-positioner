@@ -51,7 +51,7 @@
     <h2>Usage examples</h2>
     <h4>With using <code>httpie</code> package</h4>
     <p>Subsat point for date and time:</p>
-    <pre>$ http POST iss-positioner.nkoshelev.pro/coords dt='2017-07-01 17:20:23'
+    <pre>$ http POST iss-positioner.nkoshelev.tech/coords dt='2017-07-01 17:20:23'
  HTTP/1.1 200 OK
  Content-Length: 133
  Content-Type: application/json; charset=utf-8
@@ -73,7 +73,7 @@
  }
 </pre>
     <p>Subsat points for date and time range:</p>
-    <pre>$ http POST iss-positioner.nkoshelev.pro/coords start_dt='2017-07-01 17:20:23' end_dt='2017-07-02 00:30:12' step:=3600
+    <pre>$ http POST iss-positioner.nkoshelev.tech/coords start_dt='2017-07-01 17:20:23' end_dt='2017-07-02 00:30:12' step:=3600
 HTTP/1.1 200 OK
 Content-Length: 590
 Content-Type: application/json; charset=utf-8
@@ -130,198 +130,294 @@ Server: Python/3.6 aiohttp/2.1.0
 }
 </pre>
     <p>Find subsat points in radius:</p>
-    <pre>$ http POST iss-positioner.nkoshelev.pro/radius start_dt="2017-06-11 17:20:23" end_dt="2017-06-20 03:30:12" lon:=107.75 lat:=53.216 dist:=250 min_duration:=50
+    <pre>$ http POST iss-positioner.nkoshelev.tech/radius start_dt="2017-06-24 17:20:23" end_dt="2017-06-26 03:30:12" lon:=45.35 lat:=40.31 dist:=155 sun_angle:='{"$between": [1, 90]}'
 HTTP/1.1 200 OK
-Content-Length: 7526
+Content-Length: 5233
 Content-Type: application/json; charset=utf-8
-Date: Sat, 10 Jun 2017 22:38:05 GMT
+Date: Mon, 19 Jun 2017 00:32:45 GMT
 Server: Python/3.6 aiohttp/2.1.0
 
 {
-    "data": [
-        [
+    "data": {
+        "2017-06-25": [
             {
-                "coord": {
-                    "latitude": 51.615554797,
-                    "longitude": 105.1945182681
+                "coords": [
+                    {
+                        "coord": {
+                            "latitude": 41.6560980011,
+                            "longitude": 45.040654242
+                        },
+                        "dist": 151.9575,
+                        "dt": "2017-06-25 11:33:25",
+                        "geohash": 3612189142451081,
+                        "units": "km"
+                    },
+                    {
+                        "coord": {
+                            "latitude": 41.620011176,
+                            "longitude": 45.1084819436
+                        },
+                        "dist": 147.1127,
+                        "dt": "2017-06-25 11:33:26",
+                        "geohash": 3612189381935032,
+                        "units": "km"
+                    },
+                    ...
+                    {
+                        "coord": {
+                            "latitude": 40.5169486871,
+                            "longitude": 47.1061268449
+                        },
+                        "dist": 150.4877,
+                        "dt": "2017-06-25 11:33:56",
+                        "geohash": 3612067477243933,
+                        "units": "km"
+                    }
+                ],
+                "end": {
+                    "coord": {
+                        "latitude": 40.5169486871,
+                        "longitude": 47.1061268449
+                    },
+                    "dist": 150.4877,
+                    "dt": "2017-06-25 11:33:56",
+                    "geohash": 3612067477243933,
+                    "units": "km"
                 },
-                "dist": 248.4514,
-                "dt": "2017-06-13 09:16:18",
-                "geohash": 4237098244661499,
-                "units": "km"
-            },
-            {
-                "coord": {
-                    "latitude": 51.6165103869,
-                    "longitude": 105.294688046
+                "start": {
+                    "coord": {
+                        "latitude": 41.6560980011,
+                        "longitude": 45.040654242
+                    },
+                    "dist": 151.9575,
+                    "dt": "2017-06-25 11:33:25",
+                    "geohash": 3612189142451081,
+                    "units": "km"
                 },
-                "dist": 243.6823,
-                "dt": "2017-06-13 09:16:19",
-                "geohash": 4237100216360980,
-                "units": "km"
-            },
-            {
-                "coord": {
-                    "latitude": 51.6173747268,
-                    "longitude": 105.3948578238
-                },
-                "dist": 239.0189,
-                "dt": "2017-06-13 09:16:20",
-                "geohash": 4237100762078023,
-                "units": "km"
-            },
-
-            ...
-
-             {
-                "coord": {
-                    "latitude": 51.5499688871,
-                    "longitude": 110.1997938752
-                },
-                "dist": 248.9689,
-                "dt": "2017-06-13 09:17:08",
-                "geohash": 4239262562588108,
-                "units": "km"
+                "sun_angle": 53.0876931352,
+                "title": [
+                    45.35,
+                    40.31
+                ],
+                "traverse": {
+                    "coord": {
+                        "latitude": 41.073352933,
+                        "longitude": 46.116220057
+                    },
+                    "dist": 106.697,
+                    "dt": "2017-06-25 11:33:41",
+                    "geohash": 3612029254672552,
+                    "units": "km"
+                }
             }
         ]
-    ],
+    },
     "error": false,
     "error_msg": null
-}
-</pre>
+}</pre>
     <p>Find subsat points in radius for few objects:</p>
-    <pre>$ http POST iss-positioner.nkoshelev.pro/radius start_dt="2017-06-11 17:20:23" end_dt="2017-06-15 03:30:12" objects:='[{"title": "Baku", "lat": 40.46, "lon": 49.83}, {"title": "Ozero Baikal", "lon": 107.75, "lat": 53.216}]'  dist:=250 min_duration:=70
-HTTP/1.1 200 OK
-Content-Length: 10530
-Content-Type: application/json; charset=utf-8
-Date: Sat, 10 Jun 2017 22:43:05 GMT
-Server: Python/3.6 aiohttp/2.1.0
+<pre>$ http POST iss-positioner.nkoshelev.tech/radius start_dt="2017-06-24 17:20:23" end_dt="2017-06-26 03:30:12" objects:='[{"title": "Baku", "lat": 40.46, "lon": 49.83}, {"title": "Ozero Baikal", "lon": 107.75, "lat": 53.216}]' dist:=155 sun_angle:='{"$between": [1, 90]}'
+    HTTP/1.1 200 OK
+    Content-Length: 10241
+    Content-Type: application/json; charset=utf-8
+    Date: Mon, 19 Jun 2017 00:41:49 GMT
+    Server: Python/3.6 aiohttp/2.1.0
 
-{
-    "data": {
-        "Baku": [
-            [
+    {
+        "data": {
+            "2017-06-25": [
                 {
-                    "coord": {
-                        "latitude": 41.9817437673,
-                        "longitude": 47.6533403993
+                    "coords": [
+                        {
+                            "coord": {
+                                "latitude": 39.3338549124,
+                                "longitude": 48.8792225718
+                            },
+                            "dist": 149.2349,
+                            "dt": "2017-06-25 05:05:32",
+                            "geohash": 3611733843357722,
+                            "units": "km"
+                        },
+                        ...
+                        {
+                            "coord": {
+                                "latitude": 40.8865059627,
+                                "longitude": 51.5298727155
+                            },
+                            "dist": 151.0384,
+                            "dt": "2017-06-25 05:06:13",
+                            "geohash": 3614217228560593,
+                            "units": "km"
+                        }
+                    ],
+                    "end": {
+                        "coord": {
+                            "latitude": 40.8865059627,
+                            "longitude": 51.5298727155
+                        },
+                        "dist": 151.0384,
+                        "dt": "2017-06-25 05:06:13",
+                        "geohash": 3614217228560593,
+                        "units": "km"
                     },
-                    "dist": 248.5992,
-                    "dt": "2017-06-12 16:25:57",
-                    "geohash": 3612423003133645,
-                    "units": "km"
+                    "start": {
+                        "coord": {
+                            "latitude": 39.3338549124,
+                            "longitude": 48.8792225718
+                        },
+                        "dist": 149.2349,
+                        "dt": "2017-06-25 05:05:32",
+                        "geohash": 3611733843357722,
+                        "units": "km"
+                    },
+                    "sun_angle": 41.9252071823,
+                    "title": "Baku",
+                    "traverse": {
+                        "coord": {
+                            "latitude": 40.0998146954,
+                            "longitude": 50.1561203599
+                        },
+                        "dist": 48.6902,
+                        "dt": "2017-06-25 05:05:52",
+                        "geohash": 3612624174040669,
+                        "units": "km"
+                    }
                 },
                 {
-                    "coord": {
-                        "latitude": 41.9460624976,
-                        "longitude": 47.7219083905
+                    "coords": [
+                        {
+                            "coord": {
+                                "latitude": 39.8750128105,
+                                "longitude": 48.2068732381
+                            },
+                            "dist": 152.528,
+                            "dt": "2017-06-25 11:34:13",
+                            "geohash": 3612454092213748,
+                            "units": "km"
+                        },
+                        ...
+                        {
+                            "coord": {
+                                "latitude": 39.1050050778,
+                                "longitude": 49.4737878442
+                            },
+                            "dist": 153.7554,
+                            "dt": "2017-06-25 11:34:33",
+                            "geohash": 3611782396693308,
+                            "units": "km"
+                        }
+                    ],
+                    "end": {
+                        "coord": {
+                            "latitude": 39.1050050778,
+                            "longitude": 49.4737878442
+                        },
+                        "dist": 153.7554,
+                        "dt": "2017-06-25 11:34:33",
+                        "geohash": 3611782396693308,
+                        "units": "km"
                     },
-                    "dist": 241.734,
-                    "dt": "2017-06-12 16:25:58",
-                    "geohash": 3612423083545812,
-                    "units": "km"
-                },
-
-                ...
-
-                {
-                    "coord": {
-                        "latitude": 39.340457861,
-                        "longitude": 52.3244825006
+                    "start": {
+                        "coord": {
+                            "latitude": 39.8750128105,
+                            "longitude": 48.2068732381
+                        },
+                        "dist": 152.528,
+                        "dt": "2017-06-25 11:34:13",
+                        "geohash": 3612454092213748,
+                        "units": "km"
                     },
-                    "dist": 246.5845,
-                    "dt": "2017-06-12 16:27:08",
-                    "geohash": 3613480324666665,
-                    "units": "km"
+                    "sun_angle": 51.3293668014,
+                    "title": "Baku",
+                    "traverse": {
+                        "coord": {
+                            "latitude": 39.4919632142,
+                            "longitude": 48.8440749049
+                        },
+                        "dist": 136.5807,
+                        "dt": "2017-06-25 11:34:23",
+                        "geohash": 3611732186127579,
+                        "units": "km"
+                    }
                 }
             ]
-        ],
-        "Ozero Baikal": []
-    },
-    "error": false,
-    "error_msg": null
-}
-</pre>
+        },
+        "error": false,
+        "error_msg": null
+}</pre>
     <p>From LST file:</p>
-    <pre>$ http -f POST localhost:8081/lst start_dt='2017-06-11 17:20:23' end_dt='2017-06-12 03:30:12' dist=210 min_duration=60 lst@uragan.lst
+    <pre>$ http -f POST iss-positioner.nkoshelev.tech/lst start_dt='2017-06-21 17:20:23' end_dt='2017-06-25 03:30:12' dist=155 sun_angle='{"$between":[60, 90]}' lst@uragan.lst
 HTTP/1.1 200 OK
-Content-Length: 9444
+Content-Length: 2773
 Content-Type: application/json; charset=utf-8
-Date: Sat, 10 Jun 2017 23:02:05 GMT
+Date: Sun, 18 Jun 2017 23:18:07 GMT
 Server: Python/3.6 aiohttp/2.1.0
 
 {
     "data": {
-        "Abhzia": [],
-        "Baku": [],
-        "Cimlandskoe vodohran": [],
-        "Crimea": [],
-        "Don": [],
-        "Kerchenski most": [],
-        "Kergelen": [
-            [
-                {
-                    "coord": {
-                        "latitude": -50.0511198281,
-                        "longitude": 66.9441094995
+        "2017-06-22": [
+            {
+                "coords": [
+                    {
+                        "coord": {
+                            "latitude": 46.3698428995,
+                            "longitude": 42.7196744084
+                        },
+                        "dist": 153.2124,
+                        "dt": "2017-06-22 07:42:05",
+                        "geohash": 3707104453628981,
+                        "units": "km"
                     },
-                    "dist": 209.6767,
-                    "dt": "2017-06-12 01:41:15",
-                    "geohash": 2493333432573496,
+                    ...
+                    {
+                        "coord": {
+                            "latitude": 46.7598274929,
+                            "longitude": 43.8530954719
+                        },
+                        "dist": 153.8867,
+                        "dt": "2017-06-22 07:42:19",
+                        "geohash": 3707422748292802,
+                        "units": "km"
+                    }
+                ],
+                "end": {
+                    "coord": {
+                        "latitude": 46.7598274929,
+                        "longitude": 43.8530954719
+                    },
+                    "dist": 153.8867,
+                    "dt": "2017-06-22 07:42:19",
+                    "geohash": 3707422748292802,
                     "units": "km"
                 },
-                {
+                "start": {
                     "coord": {
-                        "latitude": -50.03455796,
-                        "longitude": 67.0373216271
+                        "latitude": 46.3698428995,
+                        "longitude": 42.7196744084
                     },
-                    "dist": 202.8507,
-                    "dt": "2017-06-12 01:41:16",
-                    "geohash": 2493335234106988,
+                    "dist": 153.2124,
+                    "dt": "2017-06-22 07:42:05",
+                    "geohash": 3707104453628981,
                     "units": "km"
                 },
-
-                ...
-
-                {
+                "sun_angle": 61.0532714812,
+                "title": "Cimlandskoe vodohran",
+                "traverse": {
                     "coord": {
-                        "latitude": -48.9167839496,
-                        "longitude": 72.4097970128
+                        "latitude": 46.5663851782,
+                        "longitude": 43.2842418551
                     },
-                    "dist": 209.4392,
-                    "dt": "2017-06-12 01:42:15",
-                    "geohash": 2517761003506213,
+                    "dist": 145.685,
+                    "dt": "2017-06-22 07:42:12",
+                    "geohash": 3707321610769135,
                     "units": "km"
                 }
-            ]
-        ],
-        "Lednik Davidova": [],
-        "Magellanov proliv": [],
-        "Ostrov Darvin": [],
-        "Ostrov Herd": [],
-        "Ozero Baikal": [],
-        "Pamir1": [],
-        "Pamir2": [],
-        "Perito- Moreno": [],
-        "Pulau Penida": [],
-        "Razan12": [],
-        "Razan3": [],
-        "Razan4": [],
-        "Razan5": [],
-        "Reki chernogo mora1": [],
-        "Reki chernogo mora2": [],
-        "Reki chernogo mora3": [],
-        "Samarskaya luka": [],
-        "Ugra": [],
-        "gora Hipsta": [],
-        "ozero Rica": [],
-        "ozero Sevan": [],
-        "vUaskaran": []
+            }
+        ]
     },
     "error": false,
     "error_msg": null
-}
-</pre>
+}</pre>
 </div>
 
 <script>

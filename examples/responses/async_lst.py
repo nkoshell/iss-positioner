@@ -4,7 +4,7 @@ from datetime import datetime
 
 from aiohttp import ClientSession
 
-URL = 'http://iss-positioner.nkoshelev.pro/lst'
+URL = 'http://iss-positioner.nkoshelev.tech/lst'
 
 PARAMS = dict(start_dt='2017-06-12',
               end_dt='2017-07-07 17:20:22',

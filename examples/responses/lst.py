@@ -3,7 +3,7 @@ from datetime import datetime
 
 import requests
 
-URL = 'http://iss-positioner.nkoshelev.pro/lst'
+URL = 'http://iss-positioner.nkoshelev.tech/lst'
 # URL = 'http://localhost:8081/lst'
 
 PARAMS = dict(start_dt='2017-06-12',

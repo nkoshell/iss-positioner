@@ -5,7 +5,7 @@ from pprint import pprint
 
 from aiohttp import ClientSession
 
-URL = 'http://iss-positioner.nkoshelev.pro/coords'
+URL = 'http://iss-positioner.nkoshelev.tech/coords'
 
 
 async def get(session, params):

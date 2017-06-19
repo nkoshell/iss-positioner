@@ -4,7 +4,7 @@ from pprint import pprint
 
 import requests
 
-URL = 'http://iss-positioner.nkoshelev.pro/coords'
+URL = 'http://iss-positioner.nkoshelev.tech/coords'
 
 
 def get(params):

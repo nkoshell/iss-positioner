@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import asyncio
+import operator
 import os
 import re
 import ujson
@@ -153,3 +154,19 @@ def read_lst(lst, encoding='cp866'):
         m.update(lat=float(m['lat']), lon=float(m['lon']))
         objects.append(m)
     return objects
+
+
+def parse_filters(value, filters):
+    operators = {
+        '$lt': lambda x: operator.lt(value, x),
+        '$lte': lambda x: operator.le(value, x),
+        '$eq': lambda x: operator.eq(value, x),
+        '$ne': lambda x: operator.ne(value, x),
+        '$gte': lambda x: operator.ge(value, x),
+        '$gt': lambda x: operator.gt(value, x),
+        '$between': lambda x: operator.ge(value, x[0]) and operator.le(value, x[-1])
+    }
+
+    if isinstance(filters, dict):
+        return all(operators[k](v) for k, v in filters.items() if k in operators)
+    return True

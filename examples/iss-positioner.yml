@@ -3,8 +3,8 @@ redis:
   encoding: utf-8
 
 tle-storage:
-  listen_url: ws://tle.nkoshelev.pro/subscribe
-  query_url: http://tle.nkoshelev.pro/query
+  listen_url: ws://tle.nkoshelev.tech/subscribe
+  query_url: http://tle.nkoshelev.tech/query
 
 on-startup:
   redis:

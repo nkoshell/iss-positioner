@@ -5,7 +5,7 @@ from pprint import pprint
 
 from aiohttp import ClientSession
 
-URL = 'http://iss-positioner.nkoshelev.pro/radius'
+URL = 'http://iss-positioner.nkoshelev.tech/radius'
 
 # Crimea
 lon, lat = 34.6, 45.2

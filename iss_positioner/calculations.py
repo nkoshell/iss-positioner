@@ -4,7 +4,7 @@ import math
 from collections import OrderedDict
 from datetime import datetime, date, timedelta
 
-from ephem import readtle
+import ephem
 
 from .util import datetime_range, find_le
 
@@ -59,7 +59,7 @@ class Satellite(object):
     def get(self, dt, *, tle=None):
         if tle is None and isinstance(dt, (datetime, date)):
             tle = self.get_nearest_tle(dt)
-        return readtle(tle['tle_line0'], tle['tle_line1'], tle['tle_line2'])
+        return ephem.readtle(tle['tle_line0'], tle['tle_line1'], tle['tle_line2'])
 
     def get_position(self, dt, *, tle=None):
         iss = self.get(dt, tle=tle)
@@ -91,3 +91,14 @@ class AsyncSatellite(Satellite):
             end_dt = start_dt + timedelta(days=1)
         fs = (self.get_position(t) for t in datetime_range(start_dt, end_dt, step))
         return await asyncio.gather(*fs, loop=self.loop)
+
+
+def sun_angle(dt, longitude=None, latitude=None, body=ephem.Sun()):
+    obs = ephem.Observer()
+    obs.long, obs.lat, obs.date = math.radians(longitude), math.radians(latitude), dt
+    body.compute(obs)
+    return math.degrees(body.alt)
+
+
+async def async_sun_angle(dt, longitude=None, latitude=None, body=ephem.Sun()):
+    return sun_angle(dt, longitude, latitude, body)

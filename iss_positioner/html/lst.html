@@ -25,6 +25,22 @@
         pre {
             background-color: rgba(209, 209, 209, 0.42);
         }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            border: 3px solid black;
+        }
+
+        th, td[colspan] {
+            border: 3px solid black;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        td {
+            border: 1px solid black;
+        }
     </style>
 </head>
 <body>
@@ -49,20 +65,34 @@
 
         <div class="input-group">
             <label for="min_duration">Minimum session duration (in seconds)</label>
-            <input id="min_duration" type="number" min="1" step="1" name="min_duration" value="60"/>
+            <input id="min_duration" type="number" min="1" step="1" name="min_duration"/>
         </div>
 
         <div class="input-group">
             <label for="dist">Maximum distance to the object</label>
-            <input id="dist" type="number" min="1" step="0.1" name="dist" value="250"/>
+            <input id="dist" type="number" min="1" step="0.1" name="dist" value="155"/>
         </div>
 
         <div class="input-group">
             <label for="unit">Unit for distance to the object</label>
-            <select id="unit">
+            <select id="unit" name="unit">
                 <option value="km">Kilometers</option>
                 <option value="m">Meters</option>
             </select>
+        </div>
+
+        <div class="input-group">
+            <label for="unit">Unit for distance to the object</label>
+            <select id="sun_angle_key">
+                <option value="$gte">Greater than or equal</option>
+                <option value="$gt">Greater than</option>
+                <option value="$eq" selected>Equal</option>
+                <option value="$ne">Not equal</option>
+                <option value="$lte">Less than or equal</option>
+                <option value="$lt">Less than</option>
+                <option value="$between">Between</option>
+            </select>
+            <input id="sun_angle_value">
         </div>
 
         <div class="input-group">
@@ -74,27 +104,56 @@
             <button type="submit">Submit</button>
         </div>
     </fieldset>
-    <div class="answer" style="display: none;">
-        <button id="save">Download response</button>
-        <h3>Server response</h3>
-        <pre></pre>
-    </div>
 </form>
+<div class="answer" style="display: none;">
+    <table>
+        <thead>
+        <tr>
+            <th>Start</th>
+            <th>Traverse</th>
+            <th>End</th>
+            <th>Distance</th>
+            <th>Sun angle</th>
+            <th>Title</th>
+            <th>Longitude</th>
+            <th>Latitude</th>
+        </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+    <button id="save">Download response</button>
+    <h3>Server response</h3>
+    <pre></pre>
+</div>
 <script>
     (function ($) {
         var $form = $('form');
         var $answer = $('.answer');
         var $pre = $('.answer > pre');
+        var $sak = $('#sun_angle_key');
+        var $sav = $('#sun_angle_value');
+
 
         $form.submit(function (event) {
             event.preventDefault();
-
-
+            $answer.fadeOut();
+            var sunAngle = {};
             var formData = new FormData();
+
 
             $form.serializeArray().forEach(function (inpt) {
                 formData.append(inpt.name, inpt.value);
             });
+
+            if ($sav.val().indexOf(',') > -1) {
+                sunAngle[$sak.val()] = $sav.val().split(',').map(function (v) {
+                    return parseFloat(v);
+                })
+            } else {
+                sunAngle[$sak.val()] = parseFloat($sav.val());
+            }
+
+            formData.append('sun_angle', JSON.stringify(sunAngle));
 
             formData.append('lst', $("#lst")[0].files.item(0));
 
@@ -106,6 +165,23 @@
                 processData: false,
                 dataType: 'json',
                 success: function (data) {
+                    var trs = [];
+                    $.each(data.data, function (k, v) {
+                        trs.push($('<tr>').append($('<td>', {colspan: 8}).text(k)));
+                        v.forEach(function (i) {
+                            var tr = $('<tr>');
+                            tr.append($('<td>').text(i.start.dt.slice(11)));
+                            tr.append($('<td>').text(i.traverse.dt.slice(11)));
+                            tr.append($('<td>').text(i.end.dt.slice(11)));
+                            tr.append($('<td>').text(i.traverse.dist + ' ' + i.traverse.units));
+                            tr.append($('<td>').text(i.sun_angle));
+                            tr.append($('<td>').text(i.title));
+                            tr.append($('<td>').text(i.traverse.coord.longitude));
+                            tr.append($('<td>').text(i.traverse.coord.latitude));
+                            trs.push(tr);
+                        });
+                    });
+                    $('tbody').html('').append(trs);
                     $pre.html(JSON.stringify(data.data, null, 2));
                     $answer.fadeIn();
                 },
