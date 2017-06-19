@@ -8,11 +8,11 @@ from tqdm import tqdm
 LOG_FORMAT = '[%(levelname)1.1s %(asctime)s %(name)s %(module)s:%(lineno)i] %(message)s'
 logger = logging.getLogger('iss_positioner')
 
-
 __all__ = (
     'logger',
     'LOG_FORMAT',
 )
+
 
 class TqdmToLogger(io.StringIO):
     """
