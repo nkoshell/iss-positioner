@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
-from datetime import datetime
+from datetime import datetime, timedelta
 from pprint import pprint
 
 import requests
 
 URL = 'http://iss-positioner.nkoshelev.tech/radius'
+NOW = datetime.utcnow()
 
 # Crimea
 lon, lat = 34.6, 45.2
@@ -14,8 +15,6 @@ objects = [
     {'title': 'Ozero Baikal', 'lon': 107.75, 'lat': 53.216},
     {'title': 'Lednik Davidova', 'lon': 78.15, 'lat': 41.86},
 ]
-
-now = datetime.utcnow()
 
 
 def get(params):
@@ -29,11 +28,17 @@ def get(params):
 
 
 def main():
-    params_one = dict(start_dt=now.isoformat(), end_dt='2017-07-14', lat=lat, lon=lon, min_duration=30)
+    params_one = dict(start_dt=NOW.isoformat(),
+                      end_dt=(NOW + timedelta(days=21)).isoformat(),
+                      lat=lat, lon=lon,
+                      min_duration=30)
     result_one = get(params_one)
     print('One\n---')
     pprint(result_one)
-    params_many = dict(start_dt=now.isoformat(), end_dt='2017-07-14', objects=objects, min_duration=30)
+    params_many = dict(start_dt=NOW.isoformat(),
+                       end_dt=(NOW + timedelta(days=21)).isoformat(),
+                       objects=objects,
+                       min_duration=30)
     result_many = get(params_many)
     print('Many\n----')
     pprint(result_many)

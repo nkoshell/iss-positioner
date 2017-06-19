@@ -1,16 +1,18 @@
 # -*- coding: utf-8 -*-
 import asyncio
-from datetime import datetime
+import json
+from datetime import datetime, timedelta
 
 from aiohttp import ClientSession
 
 URL = 'http://iss-positioner.nkoshelev.tech/lst'
+NOW = datetime.utcnow()
 
-PARAMS = dict(start_dt='2017-06-12',
-              end_dt='2017-07-07 17:20:22',
-              dist='250',
+PARAMS = dict(start_dt=NOW.isoformat(),
+              end_dt=(NOW + timedelta(days=21)).isoformat(),
+              dist='155',
               units='km',
-              min_duration='30',
+              sun_angle=json.dumps({'$between': [1, 90]}),
               lst=open('uragan.lst', 'rb'))
 
 
@@ -19,17 +21,18 @@ async def main(loop):
     async with ClientSession(loop=loop) as session:
         async with session.post(URL, data=PARAMS) as resp:
             result = await resp.json()
-            print(datetime.utcnow() - start)
 
-            if result['error']:
-                return
+    print(datetime.utcnow() - start)
 
-            for title, coords_set in result['data'].items():
-                print()
-                print(title)
-                print('-' * len(title))
-                for coords in coords_set:
-                    print('Session duration', len(coords), 'Traverz:', min(coords, key=lambda c: c['dist']))
+    if result['error']:
+        return
+
+    for dt, sessions in result['data'].items():
+        print()
+        print(dt)
+        print('-' * len(dt))
+        for session in sessions:
+            print('Session duration', len(session['coords']), 'Traverse:', session['traverse'])
 
 
 if __name__ == '__main__':

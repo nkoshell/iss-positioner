@@ -1,16 +1,17 @@
 # -*- coding: utf-8 -*-
-from datetime import datetime
+import json
+from datetime import datetime, timedelta
 
 import requests
 
 URL = 'http://iss-positioner.nkoshelev.tech/lst'
-# URL = 'http://localhost:8081/lst'
+NOW = datetime.utcnow()
 
-PARAMS = dict(start_dt='2017-06-12',
-              end_dt='2017-07-07 17:20:22',
+PARAMS = dict(start_dt=NOW.isoformat(),
+              end_dt=(NOW + timedelta(days=21)).isoformat(),
               dist='250',
               units='km',
-              min_duration='30')
+              sun_angle=json.dumps({'$between': [1, 90]}))
 FILES = dict(lst=open('uragan.lst', 'rb'))
 
 
@@ -23,12 +24,12 @@ def main():
     if result['error']:
         return
 
-    for title, coords_set in result['data'].items():
+    for dt, sessions in result['data'].items():
         print()
-        print(title)
-        print('-' * len(title))
-        for coords in coords_set:
-            print('Session duration', len(coords), 'Traverz:', min(coords, key=lambda c: c['dist']))
+        print(dt)
+        print('-' * len(dt))
+        for session in sessions:
+            print('Session duration', len(session['coords']), 'Traverse:', session['traverse'])
 
 
 if __name__ == '__main__':

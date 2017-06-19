@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 import asyncio
-from datetime import datetime
+from datetime import datetime, timedelta
 from pprint import pprint
 
 from aiohttp import ClientSession
 
 URL = 'http://iss-positioner.nkoshelev.tech/radius'
+NOW = datetime.utcnow()
 
 # Crimea
 lon, lat = 34.6, 45.2
@@ -30,8 +31,14 @@ async def get(session, params):
 
 
 async def main(loop):
-    params_one = dict(start_dt=now.isoformat(), end_dt='2017-07-14', lat=lat, lon=lon, min_duration=30)
-    params_many = dict(start_dt=now.isoformat(), end_dt='2017-07-14', objects=objects, min_duration=30)
+    params_one = dict(start_dt=NOW.isoformat(),
+                      end_dt=(NOW + timedelta(days=21)).isoformat(),
+                      lat=lat, lon=lon,
+                      min_duration=30)
+    params_many = dict(start_dt=NOW.isoformat(),
+                       end_dt=(NOW + timedelta(days=21)).isoformat(),
+                       objects=objects,
+                       min_duration=30)
     async with ClientSession(loop=loop) as session:
         result_one, result_many = await asyncio.gather(get(session, params_one), get(session, params_many), loop=loop)
     print('One\n---')
