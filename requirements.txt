@@ -16,7 +16,7 @@ pyaml==16.12.2
 pyephem==3.7.6.0
 python-dateutil==2.6.0    # via dateutils
 pytz==2017.2              # via dateutils
-pyyaml==3.12              # via pyaml
+pyyaml==5.1               # via pyaml
 six==1.10.0               # via python-dateutil
 tqdm==4.14.0
 ujson==1.35
