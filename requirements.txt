@@ -5,19 +5,38 @@
 #    pip-compile --output-file requirements.txt requirements.in
 #
 aiohttp==2.2.0
+    # via -r requirements.in
 aioredis==0.3.2
-argparse==1.4.0           # via dateutils
-async-timeout==1.2.1      # via aiohttp
-chardet==3.0.4            # via aiohttp
+    # via -r requirements.in
+argparse==1.4.0
+    # via dateutils
+async-timeout==1.2.1
+    # via aiohttp
+chardet==3.0.4
+    # via aiohttp
 dateutils==0.6.6
-hiredis==0.2.0            # via aioredis
-multidict==3.0.0          # via aiohttp, yarl
+    # via -r requirements.in
+hiredis==0.2.0
+    # via aioredis
+multidict==3.0.0
+    # via
+    #   aiohttp
+    #   yarl
 pyaml==16.12.2
+    # via -r requirements.in
 pyephem==3.7.6.0
-python-dateutil==2.6.0    # via dateutils
-pytz==2017.2              # via dateutils
-pyyaml==3.12              # via pyaml
-six==1.10.0               # via python-dateutil
+    # via -r requirements.in
+python-dateutil==2.6.0
+    # via dateutils
+pytz==2017.2
+    # via dateutils
+pyyaml==3.12
+    # via pyaml
+six==1.10.0
+    # via python-dateutil
 tqdm==4.14.0
-ujson==1.35
-yarl==0.10.3              # via aiohttp
+    # via -r requirements.in
+ujson==5.4.0
+    # via -r requirements.in
+yarl==0.10.3
+    # via aiohttp
